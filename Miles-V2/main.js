@@ -218,15 +218,23 @@ server.listen(PORT, () => {
 
 // Function to write API keys to a file
 function writeApiKeys(apiKeys) {
-    const apiKeyContent = `
-api_key="${apiKeys['dynamic-textbox-openai'] || 'empty'}"
+  const apiKeyContent = `
+api_key="${apiKeys["dynamic-textbox-openai"] || "empty"}"
 weather_api_key="c8b138cd625d476fbdb31921231507"
-DEFAULT_LOCATION="${apiKeys['dynamic-textbox-city'] || 'empty'}"
-UNIT="${apiKeys['dynamic-textbox-unit'] || 'empty'}"
-spotify_client_id="${apiKeys['dynamic-textbox-spotify-id'] || 'empty'}"
-spotify_client_secret="${apiKeys['dynamic-textbox-spotify-secret'] || 'empty'}"
-HomeAssistant_URL_IP="${apiKeys['dynamic-textbox-home-assistant-url'] || 'empty'}"
-HomeAssistant_Token="${apiKeys['dynamic-textbox-home-assistant-token'] || 'empty'}"
+DEFAULT_LOCATION="${apiKeys["dynamic-textbox-city"] || "empty"}"
+UNIT="${apiKeys["dynamic-textbox-unit"] || "empty"}"
+spotify_client_id="${apiKeys["dynamic-textbox-spotify-id"] || "empty"}"
+spotify_client_secret="${apiKeys["dynamic-textbox-spotify-secret"] || "empty"}"
+HomeAssistant_URL_IP="${
+    apiKeys["dynamic-textbox-home-assistant-url"] || "empty"
+  }"
+HomeAssistant_Token="${
+    apiKeys["dynamic-textbox-home-assistant-token"] || "empty"
+  }"
+  eleven_api_key="${apiKeys["dynamic-textbox-eleven_labs"] || "empty"}"
+  eleven_voice_id="${
+    apiKeys["dynamic-textbox-eleven_labs-voice-id"] || "empty"
+  }"
 `;
 
     fs.writeFileSync(path.join(__dirname, 'apikey.py'), apiKeyContent);
