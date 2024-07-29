@@ -8,7 +8,7 @@ import openai
 import json
 import math
 import os
-from apikey import weather_api_key, DEFAULT_LOCATION, UNIT, spotify_client_id, spotify_client_secret
+from apikey import weather_api_key, DEFAULT_LOCATION, UNIT, spotify_client_id, spotify_client_secret, eleven_api_key, eleven_voice_id
 from datetime import datetime
 import sympy as smpy
 from urllib3.exceptions import NotOpenSSLWarning
@@ -651,16 +651,27 @@ def speak(text):
         return
 
     try:
-        response = client.audio.speech.create(
-            model="tts-1",
-            voice="echo",
-            input=text
-        )
+        url = "https://api.elevenlabs.io/v1/text-to-speech/${eleven_voice_id}"
+        payload = {
+            "text": text,
+            "model_id": "eleven_turbo_v2",
+            "voice_settings": {
+                "stability": 0.24,
+                "similarity_boost": 0.7,
+                "style": 0.8
+            }
+        }
 
-        byte_stream = io.BytesIO(response.content)
+        headers = {
+            "xi-api-key": eleven_api_key,
+            "Content-Type": "application/json"
+        }
 
-        audio = AudioSegment.from_file(byte_stream, format="mp3")
-        audio.export("output.mp3", format="mp3")
+        response = requests.request("POST", url, json=payload, headers=headers)
+
+        with open('output.mp3', 'wb') as f:
+            f.write(response.content)
+        audio = AudioSegment.from_file('output.mp3', format="mp3")
 
         print("[Miles is speaking a response...]")
         play(audio)
@@ -678,14 +689,27 @@ def speak_no_text(text):
 
     def _speak():
         try:
-            response = client.audio.speech.create(
-                model="tts-1",
-                voice="echo",
-                input=text
-            )
+            url = "https://api.elevenlabs.io/v1/text-to-speech/${eleven_voice_id}"
+            payload = {
+                "text": text,
+                "model_id": "eleven_turbo_v2",
+                "voice_settings": {
+                    "stability": 0.24,
+                    "similarity_boost": 0.7,
+                    "style": 0.8
+                }
+            }
 
-            byte_stream = io.BytesIO(response.content)
-            audio = AudioSegment.from_file(byte_stream, format="mp3")
+            headers = {
+                "xi-api-key": eleven_api_key,
+                "Content-Type": "application/json"
+            }
+
+            response = requests.request("POST", url, json=payload, headers=headers)
+            
+            with open('output.mp3', 'wb') as f:
+                f.write(response.content)
+            audio = AudioSegment.from_file('output.mp3', format="mp3")
             play(audio)
 
         except Exception as e:
